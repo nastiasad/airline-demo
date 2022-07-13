@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: AIRCRAFT_SCHEMA
+      author: system
+      changes:
+        - createTable:
+            tableName: aircraft
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  remarks: "Primary Key"
+                  constraints:
+                    primaryKeyName: "pk_aircraft"
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: airline_id
+                  type: bigint
+                  remarks: "The id of the airline which the aircraft belongs to"
+                  constraints:
+                    foreignKeyName: fk_aircraft_airline
+                    referencedTableName: airline
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: price
+                  type: numeric
+                  remarks: "The price of the aircraft"
+              - column:
+                  name: max_distance
+                  type: numeric
+                  remarks: "The max distance for the aircraft"

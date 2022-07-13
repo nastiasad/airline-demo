@@ -1,7 +1,9 @@
 package com.airline.core.controller;
 
 import com.airline.core.dto.*;
+import com.airline.core.model.Aircraft;
 import com.airline.core.model.Airline;
+import com.airline.core.model.Destination;
 import com.airline.core.service.AirlineService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,26 @@ public class AirlineController {
 
         List<Airline> airlines = airlineService.getAirlines();
         return airlineDtoMapper.map(airlines);
+    }
+
+    @PostMapping("/{airlineId}/aircrafts")
+    public AircraftResponse createAircraft(@PathVariable Long airlineId,
+                                           @Valid @RequestBody AircraftRequest aircraftRequest) {
+        log.info("Initiate the add an aircraft for the airline with id :: {}, aircraftRequest :: {}",
+                airlineId, aircraftRequest);
+
+        Aircraft aircraft = airlineService.createAircraft(airlineId, aircraftRequest);
+        return airlineDtoMapper.map(aircraft);
+    }
+
+    @PostMapping("/{airlineId}/destinations")
+    public DestinationResponse addDestination(@PathVariable Long airlineId,
+                                              @Valid @RequestBody DestinationRequest destinationRequest) {
+        log.info("Initiate the add a destination for the airline with id :: {}, destinationRequest :: {}",
+                airlineId, destinationRequest);
+
+        Destination destination = airlineService.createDestination(airlineId, destinationRequest);
+        return airlineDtoMapper.map(destination);
     }
 
 }

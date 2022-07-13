@@ -1,3 +1,5 @@
 databaseChangeLog:
-  - includeAll:
-      path: 'classpath:database/changelog'
+  - include:
+      file: 'classpath:database/changelog/airline-destination-schema.yaml'
+  - include:
+      file: 'classpath:database/changelog/aircraft-schema.yaml'
