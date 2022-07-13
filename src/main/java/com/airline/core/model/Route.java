@@ -5,10 +5,12 @@ import lombok.Value;
 
 @Value
 @Builder
-public class Destination {
-    Long id;
+public class Route {
 
-    String name;
+    Destination from;
 
-    Location location;
+    Destination to;
+
+    double haversineDistance;
+
 }

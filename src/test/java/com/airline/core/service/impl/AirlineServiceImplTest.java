@@ -50,6 +50,7 @@ class AirlineServiceImplTest {
 
     @Mock
     private AircraftRepository aircraftRepository;
+
     @Mock
     private DestinationRepository destinationRepository;
 
