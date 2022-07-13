@@ -1,0 +1,80 @@
+databaseChangeLog:
+  - changeSet:
+      id: AIRLINE_DESTINATION_SCHEMA
+      author: system
+      changes:
+        - createTable:
+            tableName: airline
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  remarks: "Primary Key"
+                  constraints:
+                    primaryKeyName: "pk_airline"
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(200)
+                  remarks: "The name of the airline"
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: "uq_airline_name"
+              - column:
+                  name: balance
+                  type: numeric
+                  remarks: "Current balance of the airline"
+              - column:
+                  name: base_location_id
+                  type: bigint
+                  remarks: "Home base location id of the airline"
+        - createTable:
+            tableName: destination
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  remarks: "Primary Key"
+                  constraints:
+                    primaryKeyName: "pk_destination"
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(200)
+                  remarks: "The destination name"
+              - column:
+                  name: latitude
+                  type: decimal(8,6)
+                  remarks: "The destination latitude"
+              - column:
+                  name: longitude
+                  type: decimal(9,6)
+                  remarks: "The destination longitude"
+        - createTable:
+            tableName: airline_destination
+            columns:
+              - column:
+                  name: airline_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_airline_destination_airline_id
+                    referencedTableName: airline
+                    referencedColumnNames: id
+              - column:
+                  name: destination_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_airline_destination_destination_id
+                    referencedTableName: destination
+                    referencedColumnNames: id
+        - addPrimaryKey:
+            columnNames: airline_id, destination_id
+            constraintName: pk_airline_destination
+            tableName: airline_destination
