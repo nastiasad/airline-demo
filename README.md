@@ -1,9 +1,9 @@
 # Airline Demo Microservice
 The module contains functionality for the Airlines Management System
 
-##Testing the API with Postman
+## Testing the API with Postman
 
-###Adding an airline to the system
+### Adding an airline to the system
 `POST /airlines`
 ```json
 {
@@ -19,10 +19,10 @@ The module contains functionality for the Airlines Management System
 }
 ```
 
-###Retrieving a list of airlines and their current balance
+### Retrieving a list of airlines and their current balance
 `GET /airlines`
 
-###Adding an aircraft to a specific airline
+### Adding an aircraft to a specific airline
 `POST /airlines/1/aircrafts`
 ```json
 {
@@ -31,10 +31,10 @@ The module contains functionality for the Airlines Management System
 }
 ```
 
-###Selling an aircraft
+### Selling an aircraft
 `POST /aircrafts/1/sell`
 
-###Adding a destination
+### Adding a destination
 `POST /airlines/1/destinations`
 ```json
 {
@@ -46,13 +46,13 @@ The module contains functionality for the Airlines Management System
 }
 ```
 
-###Listing the distance of a given airline from all the destinations in the system
+### Listing the distance of a given airline from all the destinations in the system
 `GET /airlines/1/destinations/routes`
 
-###Listing the available destinations for a given airline
+### Listing the available destinations for a given airline
 `GET /airlines/1/destinations/routes?availableOnly=true`
 
-###Buying an aircraft from another airline
+### Buying an aircraft from another airline
 `POST /aircrafts/1/buy`
 ```json
 {
