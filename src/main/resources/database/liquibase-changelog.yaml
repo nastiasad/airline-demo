@@ -3,3 +3,5 @@ databaseChangeLog:
       file: 'classpath:database/changelog/airline-destination-schema.yaml'
   - include:
       file: 'classpath:database/changelog/aircraft-schema.yaml'
+  - include:
+      file: 'classpath:database/changelog/aircraft-creation-date.yaml'

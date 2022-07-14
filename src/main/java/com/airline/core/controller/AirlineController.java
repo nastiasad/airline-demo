@@ -25,37 +25,45 @@ public class AirlineController {
 
     @PostMapping
     public AirlineResponse createAirline(@Valid @RequestBody AirlineRequest airlineRequest) {
-        log.info("Initiate the create airline, airlineRequest :: {}", airlineRequest);
+        log.info("Initiate create airline, airlineRequest :: {}", airlineRequest);
 
         Airline airline = airlineService.createAirline(airlineRequest);
+        log.info("Initiate create airline was successful, airlineRequest :: {}, airline created :: {}",
+                airlineRequest, airline);
         return airlineDtoMapper.map(airline);
     }
 
     @GetMapping
     public List<AirlineResponse> getAirlines() {
-        log.info("Initiate the get airlines");
+        log.info("Initiate get airlines");
 
         List<Airline> airlines = airlineService.getAirlines();
+        log.info("Initiate get airlines was successful, {} airlines were found}", airlines.size());
         return airlineDtoMapper.map(airlines);
     }
 
     @PostMapping("/{airlineId}/aircrafts")
     public AircraftResponse createAircraft(@PathVariable Long airlineId,
                                            @Valid @RequestBody AircraftRequest aircraftRequest) {
-        log.info("Initiate the add an aircraft for the airline with id :: {}, aircraftRequest :: {}",
+        log.info("Initiate add an aircraft for the airline with id :: {}, aircraftRequest :: {}",
                 airlineId, aircraftRequest);
 
         Aircraft aircraft = airlineService.createAircraft(airlineId, aircraftRequest);
+        log.info("Initiate add aircraft was successful, airline id :: {}, aircraftRequest :: {}, aircraft created :: {}",
+                airlineId, aircraftRequest, aircraft);
         return airlineDtoMapper.map(aircraft);
     }
 
     @PostMapping("/{airlineId}/destinations")
     public DestinationResponse addDestination(@PathVariable Long airlineId,
                                               @Valid @RequestBody DestinationRequest destinationRequest) {
-        log.info("Initiate the add a destination for the airline with id :: {}, destinationRequest :: {}",
+        log.info("Initiate add a destination for the airline with id :: {}, destinationRequest :: {}",
                 airlineId, destinationRequest);
 
         Destination destination = airlineService.createDestination(airlineId, destinationRequest);
+        log.info("Initiate add a destination was successful for the airline with id :: {}, " +
+                        "destinationRequest :: {}, destination created :: {}",
+                airlineId, destinationRequest, destination);
         return airlineDtoMapper.map(destination);
     }
 

@@ -31,10 +31,10 @@ public class AirlineEntity {
     @ManyToMany(mappedBy = "airlines")
     private Set<DestinationEntity> destinations = new HashSet<>();
 
-    public void addDestination(DestinationEntity destination) {
-        if (destinations == null) {
-            destinations = new HashSet<>();
+    public void addToBalance(BigDecimal amountToAdd) {
+        if (balance == null) {
+            balance = BigDecimal.ZERO;
         }
-        destinations.add(destination);
+        balance = balance.add(amountToAdd);
     }
 }

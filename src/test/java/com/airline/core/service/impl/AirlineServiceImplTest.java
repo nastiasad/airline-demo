@@ -1,16 +1,11 @@
 package com.airline.core.service.impl;
 
-import com.airline.core.dto.AircraftRequest;
-import com.airline.core.dto.AirlineRequest;
-import com.airline.core.dto.DestinationRequest;
-import com.airline.core.dto.LocationDto;
+import com.airline.core.dto.*;
 import com.airline.core.entity.AircraftEntity;
 import com.airline.core.entity.AirlineEntity;
 import com.airline.core.entity.DestinationEntity;
-import com.airline.core.exception.AlreadyExistsException;
+import com.airline.core.exception.BadRequestException;
 import com.airline.core.exception.NotFoundException;
-import com.airline.core.model.Aircraft;
-import com.airline.core.model.Airline;
 import com.airline.core.model.Destination;
 import com.airline.core.repository.AircraftRepository;
 import com.airline.core.repository.AirlineRepository;
@@ -18,25 +13,26 @@ import com.airline.core.repository.DestinationRepository;
 import com.airline.core.service.AircraftMapper;
 import com.airline.core.service.AirlineMapper;
 import com.airline.core.service.DestinationMapper;
+import com.airline.core.service.TimeService;
 import liquibase.repackaged.org.apache.commons.lang3.reflect.FieldUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -53,6 +49,9 @@ class AirlineServiceImplTest {
 
     @Mock
     private DestinationRepository destinationRepository;
+
+    @Mock
+    private TimeService timeService;
 
     final AirlineMapper airlineMapper = Mappers.getMapper(AirlineMapper.class);
     final DestinationMapper destinationMapper = Mappers.getMapper(DestinationMapper.class);
@@ -78,10 +77,10 @@ class AirlineServiceImplTest {
         when(airlineRepository.save(any())).thenReturn(createAirlineEntity());
         when(destinationRepository.save(any())).thenReturn(createDestinationEntity());
 
-        AirlineRequest airlineRequest = createAirlineRequest();
+        var airlineRequest = createAirlineRequest();
 
         // when
-        Airline airline = airlineService.createAirline(airlineRequest);
+        var airline = airlineService.createAirline(airlineRequest);
 
         // then
         assertThat(airline, notNullValue());
@@ -105,10 +104,10 @@ class AirlineServiceImplTest {
     void testCreateAirlineAlreadyExists() {
         // given
         when(airlineRepository.findByName(anyString())).thenReturn(Optional.of(createAirlineEntity()));
-        AirlineRequest airlineRequest = createAirlineRequest();
+        var airlineRequest = createAirlineRequest();
 
         // when
-        assertThrows(AlreadyExistsException.class, () -> airlineService.createAirline(airlineRequest));
+        assertThrows(BadRequestException.class, () -> airlineService.createAirline(airlineRequest));
     }
 
     @Test
@@ -118,7 +117,7 @@ class AirlineServiceImplTest {
         when(airlineRepository.findById(airlineId)).thenReturn(Optional.of(createAirlineEntity()));
 
         // when
-        Airline airline = airlineService.getAirline(airlineId);
+        var airline = airlineService.getAirline(airlineId);
 
         // then
         assertThat(airline, notNullValue());
@@ -151,7 +150,7 @@ class AirlineServiceImplTest {
         when(airlineRepository.findAll()).thenReturn(Arrays.asList(createAirlineEntity(), createAirlineEntity2()));
 
         // when
-        List<Airline> airlines = airlineService.getAirlines();
+        var airlines = airlineService.getAirlines();
 
         // then
         assertThat(airlines.size(), equalTo(2));
@@ -163,7 +162,7 @@ class AirlineServiceImplTest {
         when(airlineRepository.findAll()).thenReturn(Collections.emptyList());
 
         // when
-        List<Airline> airlines = airlineService.getAirlines();
+        var airlines = airlineService.getAirlines();
 
         // then
         assertThat(airlines.size(), equalTo(0));
@@ -177,7 +176,7 @@ class AirlineServiceImplTest {
         when(aircraftRepository.save(any(AircraftEntity.class))).thenReturn(createAircraftEntity());
 
         // when
-        Aircraft aircraft = airlineService.createAircraft(airlineId, createAircraftRequest());
+        var aircraft = airlineService.createAircraft(airlineId, createAircraftRequest());
 
         // then
         assertThat(aircraft, notNullValue());
@@ -206,7 +205,7 @@ class AirlineServiceImplTest {
         when(aircraftRepository.findByAirlineId(airlineId)).thenReturn(Collections.singletonList(createAircraftEntity()));
 
         // when
-        List<Aircraft> aircrafts = airlineService.getAircrafts(airlineId);
+        var aircrafts = airlineService.getAircrafts(airlineId);
 
         // then
         assertThat(aircrafts.size(), equalTo(1));
@@ -220,7 +219,7 @@ class AirlineServiceImplTest {
         when(aircraftRepository.findByAirlineId(airlineId)).thenReturn(Collections.emptyList());
 
         // when
-        List<Aircraft> aircrafts = airlineService.getAircrafts(airlineId);
+        var aircrafts = airlineService.getAircrafts(airlineId);
 
         // then
         assertThat(aircrafts.size(), equalTo(0));
@@ -234,7 +233,7 @@ class AirlineServiceImplTest {
         when(destinationRepository.save(any(DestinationEntity.class))).thenReturn(createDestinationEntity());
 
         // when
-        Destination destination = airlineService.createDestination(airlineId, createDestinationRequest());
+        var destination = airlineService.createDestination(airlineId, createDestinationRequest());
 
         // then
         assertThat(destination, notNullValue());
@@ -266,7 +265,7 @@ class AirlineServiceImplTest {
                 Collections.singletonList(createDestinationEntity()));
 
         // when
-        List<Destination> destinations = airlineService.getDestinations(airlineId);
+        var destinations = airlineService.getDestinations(airlineId);
 
         // then
         assertThat(destinations.size(), equalTo(1));
@@ -280,10 +279,125 @@ class AirlineServiceImplTest {
         when(destinationRepository.findByAirlineId(airlineId)).thenReturn(Collections.emptyList());
 
         // when
-        List<Destination> destinations = airlineService.getDestinations(airlineId);
+        var destinations = airlineService.getDestinations(airlineId);
 
         // then
         assertThat(destinations.size(), equalTo(0));
+    }
+
+    @Test
+    void testSellAircraftSuccess() {
+        // given
+        Long aircraftId = 1L;
+        var aircraftEntity = createAircraftEntity(BigDecimal.valueOf(1000.50),
+                LocalDate.of(2019, 1, 1));
+        when(aircraftRepository.findById(aircraftId)).thenReturn(Optional.of(aircraftEntity));
+        when(timeService.getCurrentDate()).thenReturn(LocalDate.of(2022, 1, 1));
+
+        // when
+        airlineService.sellAircraft(aircraftId);
+
+        // then
+        verify(aircraftRepository).delete(aircraftEntity);
+
+        var airlineCaptor = ArgumentCaptor.forClass(AirlineEntity.class);
+        verify(airlineRepository).save(airlineCaptor.capture());
+        var capturedAirline = airlineCaptor.getValue();
+        assertThat(capturedAirline.getBalance(), comparesEqualTo(BigDecimal.valueOf(290.140)));
+    }
+
+    @Test
+    void testSellAircraftAircraftPriceNegative() {
+        // given
+        Long aircraftId = 1L;
+        var aircraftEntity = createAircraftEntity(BigDecimal.valueOf(1000.50),
+                LocalDate.of(2015, 1, 1));
+        when(aircraftRepository.findById(aircraftId)).thenReturn(Optional.of(aircraftEntity));
+        when(timeService.getCurrentDate()).thenReturn(LocalDate.of(2022, 1, 1));
+
+        // when
+        assertThrows(BadRequestException.class, () -> airlineService.sellAircraft(aircraftId));
+
+        // then
+        verifyNoInteractions(airlineRepository);
+        verifyNoMoreInteractions(aircraftRepository);
+    }
+
+    @Test
+    void testBuyAircraftSuccess() {
+        // given
+        Long aircraftId = 1L;
+        Long buyerAirlineId = 2L;
+        var buyerAirlineRequest = BuyerAirlineRequest.builder()
+                .buyerAirlineId(buyerAirlineId)
+                .build();
+
+        when(timeService.getCurrentDate()).thenReturn(LocalDate.of(2022, 1, 1));
+        when(airlineRepository.findById(buyerAirlineId)).thenReturn(Optional.of(createAirlineEntity2(BigDecimal.valueOf(600))));
+        var aircraftToBuyEntity = createAircraftEntity(BigDecimal.valueOf(1000.50),
+                LocalDate.of(2020, 1, 1));
+        when(aircraftRepository.findById(aircraftId)).thenReturn(Optional.of(aircraftToBuyEntity));
+
+        // when
+        airlineService.buyAircraft(aircraftId, buyerAirlineRequest);
+
+        // then
+        var airlineCaptor = ArgumentCaptor.forClass(AirlineEntity.class);
+        verify(airlineRepository, times(2)).save(airlineCaptor.capture());
+        var allCapturedAirlines = airlineCaptor.getAllValues();
+        assertThat(allCapturedAirlines.get(0).getName(), equalTo("Lufthansa"));
+        assertThat(allCapturedAirlines.get(0).getBalance(), comparesEqualTo(BigDecimal.valueOf(79.740)));
+        assertThat(allCapturedAirlines.get(1).getName(), equalTo("Belavia"));
+        assertThat(allCapturedAirlines.get(1).getBalance(), comparesEqualTo(BigDecimal.valueOf(530.260)));
+
+        var aircraftCaptor = ArgumentCaptor.forClass(AircraftEntity.class);
+        verify(aircraftRepository).save(aircraftCaptor.capture());
+        assertThat(aircraftCaptor.getValue().getAirline().getName(), equalTo(allCapturedAirlines.get(0).getName()));
+    }
+
+    @Test
+    void testBuyAircraftNotEnoughMoney() {
+        // given
+        Long aircraftId = 1L;
+        Long buyerAirlineId = 2L;
+        var buyerAirlineRequest = BuyerAirlineRequest.builder()
+                .buyerAirlineId(buyerAirlineId)
+                .build();
+
+        when(timeService.getCurrentDate()).thenReturn(LocalDate.of(2022, 1, 1));
+        when(airlineRepository.findById(buyerAirlineId)).thenReturn(Optional.of(createAirlineEntity2(BigDecimal.valueOf(600))));
+        var aircraftToBuyEntity = createAircraftEntity(BigDecimal.valueOf(5000.50),
+                LocalDate.of(2020, 1, 1));
+        when(aircraftRepository.findById(aircraftId)).thenReturn(Optional.of(aircraftToBuyEntity));
+
+        // when
+        assertThrows(BadRequestException.class, () -> airlineService.buyAircraft(aircraftId, buyerAirlineRequest));
+
+        // then
+        verify(aircraftRepository, times(0)).save(any(AircraftEntity.class));
+        verify(airlineRepository, times(0)).save(any(AirlineEntity.class));
+    }
+
+    @Test
+    void testBuyAircraftAlreadyBelongs() {
+        // given
+        Long aircraftId = 22L;
+        Long buyerAirlineId = 10L;
+        var buyerAirlineRequest = BuyerAirlineRequest.builder()
+                .buyerAirlineId(buyerAirlineId)
+                .build();
+
+        when(airlineRepository.findById(buyerAirlineId)).thenReturn(Optional.of(createAirlineEntity()));
+        var aircraftToBuyEntity = createAircraftEntity(BigDecimal.valueOf(5000.50),
+                LocalDate.of(2020, 1, 1));
+        when(aircraftRepository.findById(aircraftId)).thenReturn(Optional.of(aircraftToBuyEntity));
+
+        // when
+        assertThrows(BadRequestException.class, () -> airlineService.buyAircraft(aircraftId, buyerAirlineRequest));
+
+        // then
+        verify(aircraftRepository, times(0)).save(any(AircraftEntity.class));
+        verify(airlineRepository, times(0)).save(any(AirlineEntity.class));
     }
 
     private AirlineEntity createAirlineEntity() {
@@ -295,13 +409,17 @@ class AirlineServiceImplTest {
                 .build();
     }
 
-    private AirlineEntity createAirlineEntity2() {
+    private AirlineEntity createAirlineEntity2(BigDecimal balance) {
         return AirlineEntity.builder()
                 .id(15L)
                 .name("Lufthansa")
-                .balance(BigDecimal.valueOf(100))
+                .balance(balance)
                 .baseLocation(createDestinationEntity())
                 .build();
+    }
+
+    private AirlineEntity createAirlineEntity2() {
+        return createAirlineEntity2(BigDecimal.valueOf(100));
     }
 
     private DestinationEntity createDestinationEntity() {
@@ -313,12 +431,19 @@ class AirlineServiceImplTest {
                 .build();
     }
 
-    private AircraftEntity createAircraftEntity() {
+    private AircraftEntity createAircraftEntity(BigDecimal price, LocalDate currentDate) {
         return AircraftEntity.builder()
                 .id(22L)
-                .price(BigDecimal.valueOf(1000.50))
+                .price(price)
                 .maxDistance(800.0)
+                .airline(createAirlineEntity())
+                .creationDate(currentDate)
                 .build();
+    }
+
+    private AircraftEntity createAircraftEntity() {
+        return createAircraftEntity(BigDecimal.valueOf(1000.50),
+                LocalDate.of(2019, 1, 1));
     }
 
     private AirlineRequest createAirlineRequest() {

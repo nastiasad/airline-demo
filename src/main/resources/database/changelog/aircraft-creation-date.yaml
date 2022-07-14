@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: AIRCRAFT_CREATION_DATE
+      author: system
+      changes:
+        - addColumn:
+            tableName: aircraft
+            columns:
+              - column:
+                  name: creation_date
+                  type: date
+                  constraints:
+                    nullable: false

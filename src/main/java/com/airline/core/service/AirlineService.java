@@ -22,4 +22,8 @@ public interface AirlineService {
     Destination createDestination(Long airlineId, DestinationRequest destinationRequest);
 
     List<Destination> getDestinations(Long airlineId);
+
+    void sellAircraft(Long aircraftId);
+
+    void buyAircraft(Long aircraftId, BuyerAirlineRequest buyerAirlineRequest);
 }

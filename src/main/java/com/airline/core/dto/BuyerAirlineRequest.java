@@ -8,10 +8,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocationDto {
+public class BuyerAirlineRequest {
     @NotNull
-    Double latitude;
-
-    @NotNull
-    Double longitude;
+    Long buyerAirlineId;
 }

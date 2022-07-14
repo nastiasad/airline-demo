@@ -1,7 +1,6 @@
 package com.airline.core.dto;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -9,8 +8,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
-@Value
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AirlineRequest {
     @NotBlank
     String name;
