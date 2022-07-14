@@ -23,10 +23,11 @@ public class RouteController {
     @GetMapping("/routes")
     public List<RouteResponse> getRoutes(@PathVariable Long airlineId,
                                          @RequestParam(required = false, defaultValue = "false") boolean availableOnly) {
-        log.info("Initiate to list the distance from all the destinations for the airline with id :: {}",
-                airlineId);
-
+        log.info("Initiate list distance from all the destinations for the airline with id :: {}, availableOnly :: {}",
+                airlineId, availableOnly);
         List<Route> routes = routeService.getRoutes(airlineId, availableOnly);
+        log.info("Initiate list distance was successful, airline id :: {}, availableOnly :: {}, routs found :: {}",
+                airlineId, availableOnly, routes);
         return routeDtoMapper.map(routes);
     }
 }

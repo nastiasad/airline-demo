@@ -27,6 +27,7 @@ public class RouteServiceImpl implements RouteService {
     public List<Route> getRoutes(Long airlineId, boolean availableOnly) {
         Airline airline = airlineService.getAirline(airlineId);
         List<Destination> destinations = airlineService.getDestinations(airlineId);
+        log.info("{} destinations were found for the airline with id :: {}", destinations.size(), airlineId);
 
         List<Route> routes = new ArrayList<>();
         int n = destinations.size();
@@ -36,6 +37,8 @@ public class RouteServiceImpl implements RouteService {
                 Destination to = destinations.get(j);
                 double haversineDistance = SloppyMath.haversinKilometers(from.getLocation().getLatitude(),
                         from.getLocation().getLongitude(), to.getLocation().getLatitude(), to.getLocation().getLongitude());
+                log.info("The distance :: {} calculated successfully from destination id :: {} to destination id :: {}",
+                        haversineDistance, from.getId(), to.getId());
                 Route route = Route.builder()
                         .from(from)
                         .to(to)
@@ -46,6 +49,7 @@ public class RouteServiceImpl implements RouteService {
         }
 
         if (availableOnly) {
+            log.info("The availableOnly flag is on, initiating filtering");
             return filterAvailable(routes, airline);
         }
         return routes;
@@ -53,6 +57,8 @@ public class RouteServiceImpl implements RouteService {
 
     private List<Route> filterAvailable(List<Route> routes, Airline airline) {
         Double maxAircraftDistance = findMaximalMaxDistance(airline.getId());
+        log.info("Maximum aircraft distance :: {} was calculated for the airline with id :: {}",
+                maxAircraftDistance, airline.getId());
         return routes.stream()
                 .filter(route -> route.getHaversineDistance() < maxAircraftDistance)
                 .collect(Collectors.toList());
