@@ -1,7 +1,13 @@
 package com.airline.core.controller;
 
 import com.airline.core.dto.BuyerAirlineRequest;
+import com.airline.core.dto.RestErrorResponse;
 import com.airline.core.service.AirlineService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +24,12 @@ public class AircraftOperationController {
 
     private final AirlineService airlineService;
 
+    @Operation(summary = "Sell an existing aircraft for the airline")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "The aircraft was sold successfully"),
+            @ApiResponse(responseCode = "404", description = "Aircraft was not found for the id provided",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RestErrorResponse.class))})})
     @PostMapping("/{aircraftId}/sell")
     public void sellAircraft(@PathVariable Long aircraftId) {
         log.info("Initiate sell the aircraft with id :: {} for the airline", aircraftId);
@@ -25,6 +37,15 @@ public class AircraftOperationController {
         log.info("Initiate sell the aircraft was successful for aircraft id :: {} for the airline", aircraftId);
     }
 
+    @Operation(summary = "Buy an existing aircraft from another airline")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "The aircraft was bought successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request supplied",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RestErrorResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "Aircraft or buyer airline was not found for the id provided",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RestErrorResponse.class))})})
     @PostMapping("/{aircraftId}/buy")
     public void buyAircraft(@PathVariable Long aircraftId,
                             @Valid @RequestBody BuyerAirlineRequest buyerAirlineRequest) {
