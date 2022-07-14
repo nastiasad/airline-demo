@@ -16,8 +16,9 @@ import com.airline.core.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -162,7 +163,7 @@ public class AirlineServiceImpl implements AirlineService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void buyAircraft(Long aircraftId, BuyerAirlineRequest buyerAirlineRequest) {
         log.info("Buying the aircraft with id :: {} for the buyer airline with id :: {}", aircraftId,
                 buyerAirlineRequest.getBuyerAirlineId());
