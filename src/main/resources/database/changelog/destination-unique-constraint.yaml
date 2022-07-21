@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: DESTINATION_UNIQUE_CONSTRAINT
+      author: system
+      changes:
+        - addUniqueConstraint:
+            columnNames: latitude, longitude
+            constraintName: destination_lat_long_uq
+            tableName: destination

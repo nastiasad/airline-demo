@@ -5,3 +5,5 @@ databaseChangeLog:
       file: 'classpath:database/changelog/aircraft-schema.yaml'
   - include:
       file: 'classpath:database/changelog/aircraft-creation-date.yaml'
+  - include:
+      file: 'classpath:database/changelog/destination-unique-constraint.yaml'
